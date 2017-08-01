@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <name>Ingolf Wagner</name>
+    <email>contact@ingolf-wagner.de</email>
+  </maintainer>
+  <longdescription>
+A simple tool written in bash to memorize stuff.
+
+Features:
+* add text to a topic to memorize it
+* search for strings in your memo-database
+* copy/import files to topic folder.
+  </longdescription>
+</pkgmetadata>

@@ -17,3 +17,4 @@ and clone this project into `/home/overlays/my-overlay`
 To run the tests locally you need docker and understand what you are doing
 
 > ./travis/repoman.sh
+> ./travis/emerge-new-ebuilds.sh

@@ -1,0 +1,17 @@
+
+cache:
+  directories:
+  - $HOME/.portage
+
+matrix:
+  include:
+    - os: linux
+      services: docker
+      language: generic
+      sudo: required
+      script:
+        - bash ./travis/repoman.sh
+        - bash ./travis/emerge-new-ebuilds.sh
+
+
+      

@@ -4,13 +4,25 @@
 
 set -xe
 
-if [ "$#" -ne 1 ]; then
-  echo "Usage: $0 <ebuild category>/<ebuild name>.ebuild" >&2
+if [[ "$#" -le 0 ]] || [[ "$#" -gt 2 ]]
+then
+  echo "Usage: $0 =<ebuild category>/<ebuild name>-<version>" >&2
+  echo "Usage: $0 <ebuild category>/<ebuild name>" >&2
   exit 1
 fi
 
-EBUILD="${1}"
-echo "Emerging ${EBUILD}"
+PACKAGE=$1
+CONFIG=$2
+cat <<EOF
+-----------------------------------------------
+
+     Emerging ${PACKAGE}
+              ${CONFIG}
+
+-----------------------------------------------
+EOF
+
+
 
 # Disable news messages from portage and disable rsync's output
 export FEATURES="-news" \
@@ -39,13 +51,12 @@ export DISTDIR="/tmp/distfiles"
 unset ACCEPT_KEYWORDS
 unset USE
 
-PKG_NAME=$( basename "${EBUILD}" ".ebuild" )
-PKG_CATEGORY="${EBUILD%%/*}"
-
-# TODO it must be able to run multiple jobs here
-PKG_CONF_FILE="./tests/packages/${PKG_CATEGORY}/${PKG_NAME}.conf"
-if [ -f "${PKG_CONF_FILE}" ]; then
-  source "${PKG_CONF_FILE}"
+if [[ -z ${CONFIG} ]]
+then
+    echo "no config-file set emerge as default"
+else
+    echo "run config-file ${CONFIG}"
+    bash ${CONFIG}
 fi
 
 # Emerge dependencies first
@@ -56,9 +67,9 @@ emerge \
     --onlydeps \
     --autounmask=y \
     --autounmask-continue=y \
-    "=${PKG_CATEGORY}/${PKG_NAME}"
+    "${PACKAGE}"
 
 # Emerge the ebuild itself
 emerge \
     --verbose \
-    "=${PKG_CATEGORY}/${PKG_NAME}"
+    "${PACKAGE}"

@@ -10,7 +10,12 @@ matrix:
       language: generic
       sudo: required
       script:
-        - bash ./travis/repoman.sh
+        - bash ./travis/emerge-new-ebuilds.sh
+    - os: linux
+      services: docker
+      language: generic
+      sudo: required
+      script:
         - bash ./travis/emerge-new-ebuilds.sh
 
 

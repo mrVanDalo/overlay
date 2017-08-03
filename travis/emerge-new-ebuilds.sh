@@ -6,7 +6,8 @@ set -ex
 CURRENT_BRANCH="${TRAVIS_BRANCH:master}"
 if [[ ${CURRENT_BRANCH} == "master" ]]
 then
-    DIFF_TEST_AGAINST="HEAD^^"
+    exit 0 # don't build for master
+    DIFF_TEST_AGAINST="HEAD^"
 else
     DIFF_TEST_AGAINST="origin/master"
     # fix missing master branch : pull stuff
@@ -38,7 +39,7 @@ function test_package(){
     PKG_CONFIG_FOLDER="./travis/config/${PKG_CATEGORY}/${PKG_NAME}"
     if [[ -d "${PKG_CONFIG_FOLDER}" ]] && [[ $(ls -A "${PKG_CONFIG_FOLDER}") ]]
     then
-        PKG_CONFIG_FILES=($(ls ${PKG_CONFIG_FOLDER} | grep '\.sh$' | grep -v '^no-' ))
+        PKG_CONFIG_FILES=($(ls ${PKG_CONFIG_FOLDER} | grep '\.sh$' ))
         cat <<EOF
 ------------------------------------
 

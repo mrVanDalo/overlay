@@ -22,6 +22,17 @@ cat <<EOF
 -----------------------------------------------
 EOF
 
+function die(){
+    cat <<EOF
+!---------------------------------------------!
+
+ Failed Build : ${PACKAGE}
+                ${CONFIG}
+
+!---------------------------------------------!
+EOF
+    exit 1
+}
 
 
 # Disable news messages from portage and disable rsync's output
@@ -51,25 +62,127 @@ export DISTDIR="/tmp/distfiles"
 unset ACCEPT_KEYWORDS
 unset USE
 
+TRAVIS_EBUILD_HELP_PACKAGES=()
 if [[ -z ${CONFIG} ]]
 then
     echo "no config-file set emerge as default"
 else
     echo "run config-file ${CONFIG}"
-    bash ${CONFIG}
+    . ${CONFIG}
 fi
+
+function help_package_emerge_and_exit(){
+    help_pkg=$1
+    cat <<EOF
+------------------------------------------------------------------------------------
+
+  install help package : ${help_pkg}
+
+------------------------------------------------------------------------------------
+EOF
+
+    emerge \
+        --quiet-build \
+        --buildpkg \
+        --usepkg \
+        --getbinpkg \
+        --autounmask=y \
+        --autounmask-continue=y \
+        "${help_pkg}" || die
+
+    cat <<EOF
+
+
+
+
+------------------------------------------------------------------------------------
+
+ This is just a build that is depended to be in the cache
+ otherwise the real build will not proceed in time.
+
+
+
+  >>>>>   HIT THE REBUILD BUTTON !!! <<<<<<<
+
+
+
+------------------------------------------------------------------------------------
+
+
+EOF
+
+    # yes it should exit with success
+    # otherwise the cache will not be stored by travis
+    exit 1
+}
+
+# help travis to fill cache without running in timeouts
+for help_pkg in "${TRAVIS_EBUILD_HELP_PACKAGES[@]}"
+do
+    emerge -p --usepkgonly ${help_pkg} || help_package_emerge_and_exit ${help_pkg}
+done
+
 
 # Emerge dependencies first
 emerge \
     --quiet-build \
     --buildpkg \
     --usepkg \
+    --getbinpkg \
     --onlydeps \
     --autounmask=y \
     --autounmask-continue=y \
-    "${PACKAGE}"
+    "${PACKAGE}" || die
 
 # Emerge the ebuild itself
 emerge \
     --verbose \
-    "${PACKAGE}"
+    --usepkg=n \
+    --getbinpkg=n \
+    --buildpkg \
+    "${PACKAGE}" || die
+
+
+
+
+# Print out some information about dependencies at the end
+cat <<EOF
+----------------------------------------------------------
+
+  RDEPEND information :
+
+----------------------------------------------------------
+EOF
+cat <<EOF
+
+linked packages :
+
+EOF
+qlist -e ${PACKAGE} \
+    | grep -ve "'" \
+    | xargs scanelf -L -n -q -F "%n #F" \
+    | tr , ' ' \
+    | xargs qfile -Cv \
+    | sort -u \
+    | awk '{print $1}' \
+    | uniq \
+    | xargs qatom --format  "%{CATEGORY}/%{PN}" || exit 0
+
+cat <<EOF
+
+linked virtual packages :
+
+EOF
+qlist -e ${PACKAGE} \
+    | grep -ve "'" \
+    | xargs scanelf -L -n -q -F "%n #F" \
+    | tr , ' ' \
+    | xargs qfile -Cv \
+    | sort -u \
+    | awk '{print $1}' \
+    | uniq \
+    | xargs qatom --format  "%{CATEGORY}/%{PN}" \
+    | xargs -L1 qdepends --nocolor --name-only --rdepend --query \
+    | grep ^virtual  \
+    | uniq || exit 0
+

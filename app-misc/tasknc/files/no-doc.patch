@@ -1,0 +1,28 @@
+diff --git a/Makefile b/Makefile
+index 666020c..7b78d0b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -20,15 +20,14 @@ ifeq ($(uname_O),Cygwin)
+ 		CFLAGS += -I /usr/include/ncurses
+ endif
+ 
+-all: $(OUT) doc
++all: $(OUT)
+ 
+ doc: tasknc.1
+ tasknc.1: README.pod
+ 		pod2man --section=1 --center="tasknc Manual" --name="tasknc" --release="tasknc ${VERSION}" $< > $@
+ 
+-install: tasknc tasknc.1
++install: tasknc
+ 		install -D -m755 tasknc ${DESTDIR}${PREFIX}/bin/tasknc
+-		install -D -m644 tasknc.1 ${DESTDIR}${MANPREFIX}/man1/tasknc.1
+ 		install -D -m644 config ${DESTDIR}${PREFIX}/share/tasknc/config
+ 
+ uninstall:
+@@ -47,4 +46,4 @@ tags: $(SRC)
+ 		ctags *.c *.h
+ 
+ clean:
+-		rm tasknc tasknc.1 *.o
++		rm tasknc *.o

@@ -1,0 +1,13 @@
+diff --git a/Makefile b/Makefile
+index d50e1c0..666020c 100644
+--- a/Makefile
++++ b/Makefile
+@@ -6,7 +6,7 @@ OUT 		= tasknc
+ #variables
+ CC      	= cc
+ CFLAGS 		= -Wall -g -Wextra -lncursesw -std=c99 -O2
+-VERSION 	= $(shell git describe)
++VERSION 	= 0.8
+ 
+ PREFIX 	   ?= /usr/local
+ MANPREFIX  ?= ${PREFIX}/share/man

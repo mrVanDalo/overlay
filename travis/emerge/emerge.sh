@@ -82,6 +82,7 @@ function help_package_emerge_and_exit(){
 EOF
 
     emerge \
+        --verbose \
         --quiet-build \
         --buildpkg \
         --usepkg \
@@ -125,6 +126,7 @@ done
 
 # Emerge dependencies first
 emerge \
+    --verbose \
     --quiet-build \
     --buildpkg \
     --usepkg \

@@ -1,0 +1,52 @@
+#!/bin/bash
+
+
+#
+# !! this thing will now work on travis qtwebkit will not compile in time. !!
+#
+
+echo "VIDEO_CARDS=\"\"" >> /etc/portage/make.conf
+echo "RUBY_TARGETS=\"ruby21 ruby22 ruby23 ruby24\"" >> /etc/portage/make.conf
+
+cat >/etc/portage/package.use/supercollider <<EOF
+
+media-sound/supercollider qt5 jack -portaudio wiimote
+
+# required by dev-qt/qtgui-5.7.1-r1::gentoo[xcb]
+# required by dev-qt/qtprintsupport-5.7.1::gentoo
+# required by media-sound/supercollider-3.8.0::mrVanDalo[qt5]
+# required by =media-sound/supercollider-3.8.0 (argument)
+>=x11-libs/libxkbcommon-0.7.1 X
+# required by dev-qt/qtwebkit-5.7.1::gentoo
+# required by media-sound/supercollider-3.8.0::mrVanDalo[qt5]
+# required by =media-sound/supercollider-3.8.0 (argument)
+>=dev-qt/qtcore-5.7.1-r3 icu
+# required by dev-qt/qtcore-5.7.1-r3::gentoo
+# required by dev-qt/qtwidgets-5.7.1::gentoo
+# required by dev-qt/qtdeclarative-5.7.1::gentoo[widgets]
+# required by media-sound/supercollider-3.8.0::mrVanDalo[qt5]
+# required by =media-sound/supercollider-3.8.0 (argument)
+>=dev-libs/libpcre-8.40-r1 pcre16
+# required by dev-qt/qtgui-5.7.1-r1::gentoo[xcb]
+# required by dev-qt/qtprintsupport-5.7.1::gentoo
+# required by media-sound/supercollider-3.8.0::mrVanDalo[qt5]
+# required by =media-sound/supercollider-3.8.0 (argument)
+>=x11-libs/libxcb-1.12-r2 xkb
+
+#
+# opengl not needed
+#
+
+# needed ?
+media-libs/mesa -llvm -gallium -classic
+>=dev-qt/qtgui-5.7.1 xcb -gles2 -egl
+dev-qt/qtwebkit -jit
+
+EOF
+
+cat >/etc/portage/package.keywords <<EOF
+# required by =media-sound/supercollider-3.8.0 (argument)
+=media-sound/supercollider-3.8.0 ~amd64
+EOF
+
+# export TRAVIS_EBUILD_HELP_PACKAGES=()

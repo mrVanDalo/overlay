@@ -32,7 +32,6 @@ RDEPEND="
 		dev-qt/qtprintsupport:5
 		dev-qt/qtwebkit:5
 		dev-qt/qtwidgets:5
-		dev-qt/qtconcurrent:5
 	)
 	sndfile? ( media-libs/libsndfile )
 	wiimote? ( app-misc/cwiid )
@@ -47,6 +46,7 @@ DEPEND="${RDEPEND}
 	qt5? (
 		dev-qt/linguist-tools:5
 		dev-qt/qtdeclarative:5
+		dev-qt/qtconcurrent:5
 	)
 "
 

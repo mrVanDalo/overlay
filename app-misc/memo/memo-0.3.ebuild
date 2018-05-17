@@ -3,16 +3,15 @@
 
 EAPI=6
 
-inherit bash-completion-r1 git-r3
+inherit bash-completion-r1
 
 DESCRIPTION="A simple tool written in bash to memorize stuff."
 HOMEPAGE="http://palovandalo.com/memo/"
-EGIT_REPO_URI="https://github.com/mrVanDalo/${PN}.git"
-EGIT_BRANCH="develop"
+SRC_URI="https://github.com/mrVanDalo/${PN}/archive/${PV}.tar.gz"
 
 SLOT="0"
 LICENSE="GPL-2"
-KEYWORDS=""
+KEYWORDS="~amd64 ~x86"
 IUSE=""
 
 RDEPEND="
